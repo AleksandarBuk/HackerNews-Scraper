@@ -63,11 +63,22 @@ def get_validated_input(prompt):
             print("Please enter a valid integer.")
 
 
-pages_to_scrape = get_validated_input("Enter the number of pages to scrape: ")
+if __name__ == "__main__":
 
-try:
-    results = get_multiple_pages_data(pages_to_scrape)
-    save_to_excel(sort_stories_by_votes(results), input('Name the file: ') + '.xlsx')
-    print("Scraping completed successfully!")
-except Exception as e:
-    print(f"An error occurred: {e}")
+    pages_to_scrape = get_validated_input("Enter the number of pages to scrape: ")
+    name_of_file = input('Name the file: ')
+    try:
+        results = get_multiple_pages_data(pages_to_scrape)
+        excel_filename = name_of_file + '.xlsx'
+        sorted_result = sort_stories_by_votes(results)
+
+        save_to_excel(sorted_result, excel_filename)
+
+        print("Scraping completed successfully!")
+
+        excel_data = pd.read_excel(excel_filename)
+        print(f'Recently scrapped:')
+        print(excel_data)
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
