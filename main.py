@@ -3,6 +3,9 @@ from bs4 import BeautifulSoup
 import pandas as pd
 from tqdm import tqdm
 import logging
+import click
+from datetime import date
+import os
 
 logging.basicConfig(filename='scraping.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -62,23 +65,31 @@ def get_validated_input(prompt):
         except ValueError:
             print("Please enter a valid integer.")
 
-
-if __name__ == "__main__":
-
-    pages_to_scrape = get_validated_input("Enter the number of pages to scrape: ")
-    name_of_file = input('Name the file: ')
+@click.command()
+@click.option('-p', '--pages', default=5, help='Number of pages to scrape')
+@click.option('-o', '--output', default=f'{date.today()}.xlsx', help='Name of the output file')
+def scrape(pages, output):
+    """Scrape data from Hacker News"""
     try:
-        results = get_multiple_pages_data(pages_to_scrape)
-        excel_filename = name_of_file + '.xlsx'
-        sorted_result = sort_stories_by_votes(results)
+        output_dir = '../Scraped Data'
+        result = get_multiple_pages_data(pages)
+        filename = output
+        excel_filename = os.path.join(output_dir, filename)
+
+        sorted_result = sort_stories_by_votes(result)
 
         save_to_excel(sorted_result, excel_filename)
 
-        print("Scraping completed successfully!")
+        print("Scraping completed successfuly")
 
         excel_data = pd.read_excel(excel_filename)
-        print(f'Recently scrapped:')
+
+        print(f'Recently scraped: ')
         print(excel_data)
 
     except Exception as e:
-        print(f"An error occurred: {e}")
+        print(f'An error occured: {e}')
+
+
+if __name__ == "__main__":
+    scrape()
