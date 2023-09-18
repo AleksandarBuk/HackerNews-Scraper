@@ -3,9 +3,9 @@ from bs4 import BeautifulSoup
 import pandas as pd
 from tqdm import tqdm
 import logging
-import click
 from datetime import date
 import os
+import click
 
 logging.basicConfig(filename='scraping.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -66,12 +66,13 @@ def get_validated_input(prompt):
             print("Please enter a valid integer.")
 
 @click.command()
-@click.option('-p', '--pages', default=5, help='Number of pages to scrape')
+@click.option('-p', '--pages', default=10, help='Number of pages to scrape')
 @click.option('-o', '--output', default=f'{date.today()}.xlsx', help='Name of the output file')
 def scrape(pages, output):
     """Scrape data from Hacker News"""
+    """Titles, Posts, and Upvotes"""
     try:
-        output_dir = '../Scraped Data'
+        output_dir = '../ScrapedData'
         result = get_multiple_pages_data(pages)
         filename = output
         excel_filename = os.path.join(output_dir, filename)
