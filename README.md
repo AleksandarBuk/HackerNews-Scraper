@@ -1,4 +1,6 @@
 # HackerNews-Scraper
-  Python-based web scraper for Hacker News. Utilizes requests and BeautifulSoup libraries for data extraction. Implements error handling and logging. Data manipulation with pandas and to storage extracted data in Excel. Implemented tqdm progress bar to provide user-feedback. 
+  Python Script that utilizes Beautiful soup and an API to extract and sort data in a organized format.
 
-### **python main.py --pages number --output file_name.xlsx**
+**Input**: Number of Pages to collect,
+**Output**: Structured .xlsx file.
+### Run: `python main.py --input --output file_name.xlsx`
