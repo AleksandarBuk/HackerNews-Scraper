@@ -40,6 +40,23 @@ def get_multiple_pages_data(page_limit):
 def sort_stories_by_votes(hnlist):
     return sorted(hnlist, key=lambda k: k['votes'], reverse=True)
 
+from datetime import date, datetime, timedelta
+
+
+def parse_date(date_str):
+    if 'day' in date_str:
+        days_ago = int(date_str.split()[0])
+        post_date = date.today() - timedelta(days=days_ago)
+    elif 'hour' in date_str:
+        hours_ago = int(date_str.split()[0])
+        post_date = datetime.now() - timedelta(hours=hours_ago)
+    elif 'minute' in date_str:
+        minutes_ago = int(date_str.split()[0])
+        post_date = datetime.now() - timedelta(minutes=minutes_ago)
+    else:
+        post_date = date.today()
+    return post_date
+
 
 def create_custom_hn(links, subtext):
     hn = []
@@ -47,10 +64,13 @@ def create_custom_hn(links, subtext):
         title = item.getText()
         href = item.get('href', None)
         vote = subtext[idx].select(".score")
+        date_str = subtext[idx].select(".age")[0].getText()
+
         if len(vote):
             points = int(vote[0].getText().replace(' points', ''))
+            post_date = parse_date(date_str)
             if points > 199:
-                hn.append({'title': title, 'link': href, 'votes': points})
+                hn.append({'title': title, 'link': href, 'votes': points, 'date': post_date.strftime('%Y-%m-%d')})
     return sort_stories_by_votes(hn)
 
 
@@ -67,21 +87,22 @@ def get_validated_input(prompt):
 
 @click.command()
 @click.option('-p', '--pages', default=10, help='Number of pages to scrape')
-@click.option('-o', '--output', default=f'{date.today()}.xlsx', help='Name of the output file')
+@click.option('-o', '--output', default=f'f1_{date.today()}.xlsx', help='Name of the output file')
 def scrape(pages, output):
-    """Scrape data from Hacker News"""
-    """Titles, Posts, and Upvotes"""
+    """Scrape data from Hacker News
+        excel:Title, Link, Votes, Date
+    """
     try:
         output_dir = '../ScrapedData'
         result = get_multiple_pages_data(pages)
         filename = output
         excel_filename = os.path.join(output_dir, filename)
-
         sorted_result = sort_stories_by_votes(result)
 
         save_to_excel(sorted_result, excel_filename)
 
         print("Scraping completed successfuly")
+        print("File saved", excel_filename)
 
         excel_data = pd.read_excel(excel_filename)
 
