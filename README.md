@@ -3,4 +3,4 @@
 
 Input: Number of Pages to collect
 Output: Structured .xlsx file.
-### Run: **python main.py --input --output file_name.xlsx**
+### Run: `python main.py --input --output file_name.xlsx`
